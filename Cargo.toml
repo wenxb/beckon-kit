@@ -1,0 +1,62 @@
+[package]
+name = "beckon-kit"
+version = "0.1.0"
+edition = "2024"
+description = "Beckon's independent GPUI component library"
+license = "Apache-2.0"
+repository = "https://github.com/wenxb/beckon-kit"
+readme = "README.md"
+publish = false
+
+[features]
+default = []
+platform = ["dep:gpui_platform"]
+gallery = ["platform"]
+test-support = ["gpui/test-support", "platform", "gpui_platform/test-support", "dep:gpui_wgpu"]
+
+[dependencies]
+# The sole public engine identity, including host imports through this crate.
+gpui = { package = "gpui-pre", path = "vendor/gpui-pre", version = "=0.3.9", default-features = false }
+gpui_platform = { package = "gpui-pre-platform", path = "vendor/gpui-pre-platform", version = "=0.3.9", default-features = false, features = ["font-kit", "wayland", "x11"], optional = true }
+image = { version = "0.25", default-features = false, features = ["png"] }
+unicode-segmentation = "1.13"
+markdown = "1.0"
+
+[dev-dependencies]
+gpui = { package = "gpui-pre", path = "vendor/gpui-pre", version = "=0.3.9", default-features = false, features = ["test-support"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+gpui_wgpu = { package = "gpui-pre-wgpu", path = "vendor/gpui-pre-wgpu", version = "=0.3.9", default-features = false, features = ["test-support"], optional = true }
+
+[[bin]]
+name = "beckon-kit-gallery"
+path = "src/bin/gallery.rs"
+required-features = ["gallery"]
+
+[[example]]
+name = "motion_probe"
+required-features = ["gallery"]
+
+[[test]]
+name = "gallery"
+required-features = ["gallery", "test-support"]
+
+[[test]]
+name = "backdrop_gpu"
+required-features = ["test-support"]
+
+[[test]]
+name = "live_scene_gpu"
+required-features = ["test-support"]
+
+[[test]]
+name = "canvas_gpu"
+required-features = ["test-support"]
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+dbg_macro = "deny"
+todo = "deny"
+
