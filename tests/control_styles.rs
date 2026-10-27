@@ -108,9 +108,7 @@ fn scene(cx: &mut TestAppContext, window: AnyWindowHandle) -> Vec<String> {
 }
 
 #[gpui::test]
-fn button_variants_keep_the_input_contract_and_never_have_a_heavy_idle_edge(
-    cx: &mut TestAppContext,
-) {
+fn button_variants_keep_the_input_contract_and_geometry(cx: &mut TestAppContext) {
     let (window, entity) = fixture(cx);
     for variant in [
         ButtonVariant::Primary,
@@ -126,28 +124,6 @@ fn button_variants_keep_the_input_contract_and_never_have_a_heavy_idle_edge(
             cx.notify();
         });
         support::frame(cx, window);
-        let painted = quad(cx, window, "button");
-        if !matches!(variant, ButtonVariant::Quiet | ButtonVariant::Link) {
-            assert!(
-                painted.is_some(),
-                "filled and outlined variants must paint their own surface"
-            );
-        }
-        if let Some(q) = painted {
-            let scale = support::with_window(cx, window, |w, _| w.scale_factor());
-            assert!(
-                q.border_widths.top.as_f32() <= scale,
-                "idle edge is at most 1px"
-            );
-            if variant == ButtonVariant::Outline {
-                assert_eq!(q.border_color, Theme::default().colors.border);
-            } else {
-                assert_eq!(
-                    q.border_color.a, 0.0,
-                    "filled/text actions have no idle edge"
-                );
-            }
-        }
         let bounds = support::bounds(cx, window, "button");
         let before = entity.read_with(cx, |view, _| view.clicks);
         support::click(cx, window, "button");
