@@ -6,12 +6,14 @@
 
 ```toml
 [dependencies]
-beckon-kit = { git = "https://github.com/wenxb/beckon-kit.git", tag = "v0.1.0", features = ["platform"] }
+beckon-kit = { git = "https://github.com/wenxb/beckon-kit.git", tag = "v0.1.1", features = ["platform"] }
 ```
 
 GPUI 补丁已包含在库的 `vendor/` 中，**消费项目不需要配置 patch，也不要另外添加 GPUI 依赖**。类型、宏和平台入口统一从 kit 导入：
 
 ```rust,no_run
+# #[cfg(feature = "platform")]
+# mod native_example {
 use beckon_kit::{WindowConfig, components::Button, gpui, platform};
 use gpui::{AppContext, Context, IntoElement, Render, Window};
 
@@ -31,6 +33,7 @@ fn main() {
             .expect("打开窗口失败");
     });
 }
+# }
 ```
 
 - 默认 feature 为空；只使用组件时不必启用 `platform`。
